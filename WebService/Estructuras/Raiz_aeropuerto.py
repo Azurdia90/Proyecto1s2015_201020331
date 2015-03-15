@@ -1,10 +1,12 @@
 __author__ = 'Cristian'
 
+import Estructuras.Nodo_aeropuerto as nodo
+
 class Raiz_aeropuerto(object):
 #constructor de la clase raiz aeropuertos
     def __init__(self):
-        self.first = None
-        self.last = None
+        self.first = nodo.Nodo_aeropuerto()
+        self.last = nodo.Nodo_aeropuerto()
     #metodos set de la clase
     def get_first(self):
         return self.first

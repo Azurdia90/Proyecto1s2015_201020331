@@ -5,6 +5,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import org.json.*;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
@@ -15,46 +16,59 @@ import javax.swing.JOptionPane;
  * LA LISTA ENLZADA DE AEROPUERTOS
  */
 public class JFAdmin extends javax.swing.JFrame {
-
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     OkHttpClient cliente = new OkHttpClient();
-    public static final MediaType JSON = MediaType.parse("application/json; "
-              + "harset=utf-8");
+
       
     public JFAdmin() {
         initComponents();
         jTFestado_modificar.setEditable(false);
     }
     
-    
     /*Este metodo utiliza la libreria okhttp y oki para realizar un response
     a nuestro web service enviandole la url que deseamos, asi como tambien
     podemos obtener el response realizado y enviarlo como una cadena String
     que luego decidiremos si volverlo un objeto Json*/
-    public String consumir_get(String url)throws IOException {
+    public String get(String url)throws IOException {
             Request request = new Request.Builder()
                 .url(url)
                 .build();
         
             Response response = cliente.newCall(request).execute();
-            return response.body().string();
+            return response.body().toString();
     }//fin del metod consumir get
     
-    public String consumir_post(String url, String json) throws IOException{
-        //RequestBody body = new RequestBody.create(JSON, json);
+    String post(String url, RequestBody body) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
-                .url(url)
-                //.post(body)
-                .build();
+            .url(url)
+            .post(body)
+            .build();
         Response response = cliente.newCall(request).execute();
-        return response.body().string();                       
+        return response.body().string();
     }
+
     
     public String crear_jason_insertar(String id, String nombre, String ciudad, String contra){
-        String jason = "{'id' :'" + id +
-                       "'nombre' :'" + ciudad+ 
-                       "'ciudad' :'" + ciudad +
-                       "'contraseña:" +contra + "}";
+        String jason = "{'id':'" + id + "'," +
+                       "'nombre':'" + ciudad +"',"+ 
+                       "'ciudad':'" + ciudad +"',"+
+                       "'contraseña':'" +contra + "'}";
         return jason;
+    }
+    
+    public String buscar_ultimo(String url){
+        String devolver = null;
+        try{
+            JSONObject ultimo = new JSONObject(url);
+            if(ultimo.get("id") != "Lista_vacia"){
+                int id = Integer.parseInt(ultimo.getString("id")) + 1;
+                devolver = "A-" + id;
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Problemas en el response");
+        }
+        return devolver;
     }
     
     /**
@@ -156,6 +170,11 @@ public class JFAdmin extends javax.swing.JFrame {
         jLabel21.setText("Contraseña");
 
         jButton1.setText("Aceptar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -652,13 +671,15 @@ public class JFAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_jBbuscar_vueloActionPerformed
 
     private void jBagregar_aeorupuertoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBagregar_aeorupuertoActionPerformed
-        if(jTFnombre_aeropuerto.getText().equals("") && jTFciudad_aeropuerto.getText().equals("") 
-                && jTFcontraseña_aeropuerto.getText().equals("")){
+        if(!jTFnombre_aeropuerto.getText().equals("") && !jTFciudad_aeropuerto.getText().equals("") 
+                && !jTFcontraseña_aeropuerto.getText().equals("")){
             try{
-            String json = crear_jason_insertar(jTFid_aeropuerto.getText(), jTFnombre_aeropuerto.getText(), jTFciudad_aeropuerto.getText(),
+                String id = buscar_ultimo("http://127.0.0.1:5000/ultimo_avion");
+                String json = crear_jason_insertar(id, jTFnombre_aeropuerto.getText(), jTFciudad_aeropuerto.getText(),
                     jTFcontraseña_aeropuerto.getText());
-            String resultado = consumir_get("http://127.0.0.1:5000/mostrar_avion");
-            JOptionPane.showMessageDialog(null, resultado);                 
+                String resultado = post("http://127.0.0.1:5000/insertar_avion", json);  
+            
+                JOptionPane.showMessageDialog(null, resultado); 
             }catch(IOException e){
                 JOptionPane.showMessageDialog(null, "Problemas en el response"); 
             }
@@ -670,6 +691,10 @@ public class JFAdmin extends javax.swing.JFrame {
     private void jBmodificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBmodificarActionPerformed
  
     }//GEN-LAST:event_jBmodificarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
 

@@ -1,31 +1,36 @@
 __author__ = 'Cristian'
 
-import Estructuras.Raiz_aeropuerto as raiz
 import Estructuras.Nodo_aeropuerto as nodo
 
-class Nodo_lista_usuario(object):
+class Lista_aeropuerto(object):
 #constructor de la clase lista doble
-    def __init__(self):
-        self.root = raiz()
+    def __init__(self, raiz):
+        self.root = raiz
 
-    def es_vacia(self, raiz):
-        if raiz == None:
+    def es_vacia(self):
+        if self.root == None:
             return True
 
-    def insertar(self, raiz, id, nombre, pais, contra):
+    def insertar(self, id, nombre, pais, contra):
         nuevo = nodo(id, nombre, pais, contra)
-        if self.es_vacia(self, raiz)== False:
-            if raiz.get_first().get_id() < id:
-                nuevo.set_next(raiz.get_first())
-                raiz.get_first.set_back(nuevo)
-                raiz.set_first(nuevo)
-            elif raiz.get_last().get_id() < id:
-                nuevo.set_back(self, raiz)
-                raiz.get_last().set_next(nuevo)
-                raiz.set_last(nuevo)
+        if self.es_vacia() == False:
+            if self.root.get_first().get_id() < id:
+                nuevo.set_next(self.root.get_first())
+                self.root.get_first.set_back(nuevo)
+                self.root.set_first(nuevo)
+            elif self.root.get_last().get_id() < id:
+                nuevo.set_back(self, self.root.get_last())
+                self.root.get_last().set_next(nuevo)
+                self.root.set_last(nuevo)
         else:
-            raiz.set_first(nuevo)
-            raiz.set_last(nuevo)
+            self.root.set_first(nuevo)
+            self.root.set_last(nuevo)
+
+    def devolver_ultimo(self):
+        if self.root.get_last != None:
+            return self.root.get_last().get_id()
+        else:
+            return None
 
     def imprimir(self):
         if self.root.get_first() == None:

@@ -11,6 +11,15 @@ class Nodo_aeropuerto(object):
         self.next = None
         self.back = None
 
+    def _init_(self):
+        self.id = None
+        self.nombre_aeropuerto = None
+        self.pais_origen = None
+        self.contraseña = None
+
+        self.next = None
+        self.back = None
+
 #metodos get de la clase nodo de la lista aeropuertos
     def get_id(self):
         return self.id

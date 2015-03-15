@@ -1,5 +1,6 @@
 # importamos los paquetes necesarios
-from flask import Flask
+from flask import Flask, request
+import json
 import Estructuras.Raiz_aeropuerto as raiz_aeropuertos
 import Estructuras.Lista_aeropuerto as lista_aeropuetos
 #utilizacion de flask
@@ -10,17 +11,22 @@ raiz_lista = None
 
 #metodos que se utlilizaran para el manejo de la lista de aeropuertos
 @app.route('/insertar_avion', methods=['POST'])
-def insertar_avion(datos):
-    lista = lista_aeropuetos(raiz_lista)
+def insertar_avion():
+    lista = lista_aeropuetos.Lista_aeropuerto(raiz_lista)
+    values = request.get_json()
+    imprimir = values['id']
+    return json.dumps(imprimir)
 
-    return "exito"
-
-@app.route('/mostrar_avion', methods=['GET'])
-def mostrar_avion():
-    if raiz_lista.get_first() == None:
-        return "esta vacio"
+@app.route('/ultimo_avion', methods=['GET'])
+def ultimo_avion():
+    lista = lista_aeropuetos.Lista_aeropuerto(raiz_lista)
+    ultimo = lista.devolver_ultimo()
+    if ultimo == None:
+        retorno = "{'id':'Lista_vacia'}"
+        return json.dumps(retorno)
     else:
-        return "hay algo"
+        retorno = "{'id':'"+ultimo+"'}"
+        return json.dumps(retorno)
 
 if __name__ == '__main__':
     raiz_lista = raiz_aeropuertos.Raiz_aeropuerto()
