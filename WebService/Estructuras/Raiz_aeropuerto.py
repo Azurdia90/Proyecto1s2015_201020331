@@ -5,8 +5,8 @@ import Estructuras.Nodo_aeropuerto as nodo
 class Raiz_aeropuerto(object):
 #constructor de la clase raiz aeropuertos
     def __init__(self):
-        self.first = nodo.Nodo_aeropuerto()
-        self.last = nodo.Nodo_aeropuerto()
+        self.first = None
+        self.last = None
     #metodos set de la clase
     def get_first(self):
         return self.first

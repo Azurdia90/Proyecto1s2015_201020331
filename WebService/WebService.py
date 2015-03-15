@@ -1,5 +1,5 @@
 # importamos los paquetes necesarios
-from flask import Flask, request
+from flask import Flask, Response, request, jsonify
 import json
 import Estructuras.Raiz_aeropuerto as raiz_aeropuertos
 import Estructuras.Lista_aeropuerto as lista_aeropuetos
@@ -10,25 +10,33 @@ app = Flask(__name__)
 raiz_lista = None
 
 #metodos que se utlilizaran para el manejo de la lista de aeropuertos
-@app.route('/insertar_avion', methods=['POST'])
-def insertar_avion():
+@app.route('/insertar_aereo', methods=['POST'])
+def insertar_aero():
     lista = lista_aeropuetos.Lista_aeropuerto(raiz_lista)
-    values = request.get_json()
-    imprimir = values['id']
-    return json.dumps(imprimir)
+    id = request.form['id']
+    nombre = request.form['nombre']
+    ciudad = request.form['ciudad']
+    contra = request.form['contraseña']
+    lista.insertar(id, nombre, ciudad, contra)
+    return 'correcto'
 
-@app.route('/ultimo_avion', methods=['GET'])
-def ultimo_avion():
+@app.route('/ultimo_aereo', methods=['GET'])
+def ultimo_aero():
     lista = lista_aeropuetos.Lista_aeropuerto(raiz_lista)
     ultimo = lista.devolver_ultimo()
-    if ultimo == None:
-        retorno = "{'id':'Lista_vacia'}"
-        return json.dumps(retorno)
+    if (ultimo == 0):
+        devolver = {'id':0}
+        return json.dumps(devolver)
     else:
-        retorno = "{'id':'"+ultimo+"'}"
-        return json.dumps(retorno)
+        return jsonify(id=ultimo)
+
+@app.route('/imprimir_aereos', methods=['GET'])
+def imprimir_aero():
+    lista = lista_aeropuetos.Lista_aeropuerto(raiz_lista)
+    retornar = lista.imprimir()
+    return json.dumps(retornar)
 
 if __name__ == '__main__':
     raiz_lista = raiz_aeropuertos.Raiz_aeropuerto()
-    app.run()
+    app.run(debug=True)
 

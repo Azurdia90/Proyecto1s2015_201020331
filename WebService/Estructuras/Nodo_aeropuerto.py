@@ -25,10 +25,14 @@ class Nodo_aeropuerto(object):
         return self.id
     def get_elemento(self):
         return self.nombre_aeropuerto
-    def getpais_origen(self):
+    def get_pais_origen(self):
         return self.pais_origen
     def get_contraseña(self):
         return self.contraseña
+    def get_next(self):
+        return self.next
+    def get_back(self):
+        return self.back
 
 #metodos set de la clase nodo de la lista aeropuertos
     def set_id(self, id):
@@ -39,4 +43,8 @@ class Nodo_aeropuerto(object):
         self.pais_origen = pais
     def set_contraseña(self, contraseña):
         self.contraseña = contraseña
+    def set_next(self, next):
+        self.next = next
+    def set_back(self, back):
+        self.back = back
 pass#fin de la clase nodo_aeropuerto
