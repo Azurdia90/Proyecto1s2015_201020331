@@ -18,11 +18,13 @@ import javax.swing.JOptionPane;
  */
 public class JFAdmin extends javax.swing.JFrame {
     OkHttpClient cliente = new OkHttpClient();
-
-      
+    int id = 1;
+ 
     public JFAdmin() {
         initComponents();
         jTFestado_modificar.setEditable(false);
+        jTFlugar_llegada_modificar.setEnabled(false);
+        jTFlugar_salida_modificar.setEnabled(false);
     }
     
     /*Este metodo utiliza la libreria okhttp y oki para realizar un response
@@ -56,7 +58,7 @@ public class JFAdmin extends javax.swing.JFrame {
                 devolver = 1;
             }
         }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Problemas en el response");
+            JOptionPane.showMessageDialog(null, "Problemas en el response de ultimo aeropuerto");
         }
         return devolver;
     }
@@ -71,18 +73,64 @@ public class JFAdmin extends javax.swing.JFrame {
             jCBllegada.removeAllItems();
             for(int x = 0; x < tamaño; x++){
                 JSONObject aereo = aereos.getJSONObject(x);
-                jCBsalida.addItem(aereo.get("ciudad"));
-                jCBllegada.addItem(aereo.get("ciudad"));
+                jCBsalida.addItem(aereo.get("nombre"));
+                jCBllegada.addItem(aereo.get("nombre"));
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Problemas al imprimir aeropuertos");            
+        }
+    }//fin metodo imprimir aeropuertos
+    
+    public void limpiar_aereo(){
+        jTFnombre_aeropuerto.setText(""); 
+        jTFciudad_aeropuerto.setText("");
+        jTFcontraseña_aeropuerto.setText("");
+    }
+    
+    public void limpiar_vuelo(){
+        jTFhora_salida_insertar.setText("");
+        jTFhora_llegada_insertar.setText(""); 
+        jTFfecha_salida_insertar.setText(""); 
+        jTFfecha_llegada_insertar.setText("");
+        jTFcantidad_primeraclase_insertar.setText(""); 
+        jTFcosto_primeraclase_insertar.setText("");
+        jTFcantidad_ejecutiva_insertar.setText("");
+        jTFcosto_ejecutiva_insertar.setText("");
+        jTFcantidad_turistas_insertar.setText(""); 
+        jTFcosto_turistas_insertar.setText("");
+    }
+    
+    public void imprimir_vuelos(){
+         try{
+            URL url  = new URL("http://127.0.0.1:5000/imprimir_vuelos");
+            Response respuestas = get(url);
+            JSONArray vuelos = new JSONArray(respuestas.body().string());
+            int tamaño = vuelos.length();
+            jCBvuelo_modificar.removeAllItems();
+            for(int x = 0; x < tamaño; x++){
+                JSONObject vuelo = vuelos.getJSONObject(x);
+                jCBvuelo_modificar.addItem(vuelo.get("id"));
             }
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, "Problemas al imprimir aeropuertos");            
         }
     }
     
-    public void limpiar_aereo(){
-        jTFnombre_aeropuerto.setText(""); 
-        jTFciudad_aeropuerto.setText("");
-        jTFcontraseña_aeropuerto.setText("");
+    public void imprimir_vuelo(String respuesta){
+        JSONObject vuelo = new JSONObject(respuesta);
+        jTFlugar_salida_modificar.setText(vuelo.getString("lugar salida"));
+        jTFlugar_llegada_modificar.setText(vuelo.getString("lugar llegada"));
+        jTFhora_salida_modificar.setText(vuelo.getString("hora salida"));
+        jTFhora_llegada_modificar.setText(vuelo.getString("hora llegada")); 
+        jTFfecha_salida_modificar.setText(vuelo.getString("fecha salida")); 
+        jTFfecha_llegada_modificar.setText(vuelo.getString("fecha llegada"));
+        jTFcantidad_primeraclase_modificar.setText(vuelo.getString("cantidad primera")); 
+        jTFcosto_primeraclase_modificar.setText(vuelo.getString("costo primera"));
+        jTFcantidad_ejecutiva_modificar.setText(vuelo.getString("cantidad ejecutiva"));
+        jTFcosto_ejecutiva_modificar.setText(vuelo.getString("costo ejecutiva"));
+        jTFcantidad_turistas_modificar.setText(vuelo.getString("cantidad turista")); 
+        jTFcosto_turistas_modifcar.setText(vuelo.getString("costo turista"));  
+        jTFestado_modificar.setText(vuelo.getString("estado"));
     }
     
     /**
@@ -96,6 +144,7 @@ public class JFAdmin extends javax.swing.JFrame {
 
         jLabel23 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
@@ -134,8 +183,6 @@ public class JFAdmin extends javax.swing.JFrame {
         jTFcantidad_ejecutiva_insertar = new javax.swing.JTextField();
         jLabel37 = new javax.swing.JLabel();
         jTFcosto_ejecutiva_insertar = new javax.swing.JTextField();
-        jLabel38 = new javax.swing.JLabel();
-        jTFestado_modificar1 = new javax.swing.JTextField();
         jCBllegada = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jCBsalida = new javax.swing.JComboBox();
@@ -159,7 +206,6 @@ public class JFAdmin extends javax.swing.JFrame {
         jBmodificar_estodo_vuelo2 = new javax.swing.JButton();
         jBeliminar_vuelo = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
-        jTFbuscar_vuelo = new javax.swing.JTextField();
         jBbuscar_vuelo = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
         jTFfecha_salida_modificar = new javax.swing.JTextField();
@@ -171,10 +217,15 @@ public class JFAdmin extends javax.swing.JFrame {
         jTFcosto_turistas_modifcar = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jTFcosto_ejecutiva_modificar = new javax.swing.JTextField();
+        jCBvuelo_modificar = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        jTFlugar_salida_modificar = new javax.swing.JTextField();
 
         jLabel23.setText("jLabel23");
 
         jLabel26.setText("jLabel26");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -206,7 +257,7 @@ public class JFAdmin extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton1)
                             .addComponent(jTextField2))))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,7 +272,7 @@ public class JFAdmin extends javax.swing.JFrame {
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(52, 52, 52)
                 .addComponent(jButton1)
-                .addContainerGap(215, Short.MAX_VALUE))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", jPanel4);
@@ -255,7 +306,7 @@ public class JFAdmin extends javax.swing.JFrame {
                     .addComponent(jTFciudad_aeropuerto, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                     .addComponent(jTFnombre_aeropuerto)
                     .addComponent(jTFcontraseña_aeropuerto))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addContainerGap(120, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,12 +325,17 @@ public class JFAdmin extends javax.swing.JFrame {
                     .addComponent(jTFcontraseña_aeropuerto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addComponent(jBagregar_aeorupuerto)
-                .addContainerGap(279, Short.MAX_VALUE))
+                .addContainerGap(268, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Creación Aeropuertos", jPanel1);
 
         jBcrear_vuelo.setText("Crear");
+        jBcrear_vuelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBcrear_vueloActionPerformed(evt);
+            }
+        });
 
         jLabel28.setText("Lugar de Llegada ");
 
@@ -303,36 +359,28 @@ public class JFAdmin extends javax.swing.JFrame {
 
         jLabel37.setText("Costo de pasajeros clase ejecutiva");
 
-        jLabel38.setText("Estado inicial");
-
         jLabel1.setText("Lugar de Salida");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(171, 171, 171)
-                .addComponent(jBcrear_vuelo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel38)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
-                                .addComponent(jTFestado_modificar1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel1)
+                        .addGap(0, 296, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jCBllegada, 0, 249, Short.MAX_VALUE)
                             .addComponent(jCBsalida, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(31, 31, 31))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(161, 161, 161)
+                .addComponent(jBcrear_vuelo)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(30, 30, 30)
@@ -385,7 +433,7 @@ public class JFAdmin extends javax.swing.JFrame {
                                     .addComponent(jTFcantidad_ejecutiva_insertar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                                     .addComponent(jTFcosto_ejecutiva_insertar))))
                         .addComponent(jLabel31))
-                    .addContainerGap(30, Short.MAX_VALUE)))
+                    .addContainerGap(36, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,13 +444,9 @@ public class JFAdmin extends javax.swing.JFrame {
                     .addComponent(jCBsalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCBllegada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 240, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTFestado_modificar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel38))
-                .addGap(50, 50, 50)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 243, Short.MAX_VALUE)
                 .addComponent(jBcrear_vuelo)
-                .addContainerGap())
+                .addGap(67, 67, 67))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(82, 82, 82)
@@ -445,7 +489,7 @@ public class JFAdmin extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTFcosto_ejecutiva_insertar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel37)))
-                    .addContainerGap(122, Short.MAX_VALUE)))
+                    .addContainerGap(111, Short.MAX_VALUE)))
         );
 
         jTabbedPane1.addTab("Creación de Vuelos", jPanel2);
@@ -472,6 +516,11 @@ public class JFAdmin extends javax.swing.JFrame {
         });
 
         jBmodificar_estado_vuelo.setText("Estado en vuelo");
+        jBmodificar_estado_vuelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBmodificar_estado_vueloActionPerformed(evt);
+            }
+        });
 
         jBmodificar_estodo_vuelo2.setText("Estado en arribo");
         jBmodificar_estodo_vuelo2.addActionListener(new java.awt.event.ActionListener() {
@@ -501,101 +550,111 @@ public class JFAdmin extends javax.swing.JFrame {
 
         jLabel27.setText("Costo de pasajeros clase ejecutiva");
 
+        jLabel5.setText("Lugar de Salida");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTFbuscar_vuelo))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel15)
-                                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jTFhora_llegada_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
-                                            .addComponent(jTFhora_salida_modificar))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jLabel17)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jTFfecha_salida_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jLabel22)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTFfecha_llegada_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addComponent(jTFlugar_llegada_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jCBvuelo_modificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel15)
+                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(jLabel25)
-                                    .addGap(44, 44, 44)
-                                    .addComponent(jTFcosto_turistas_modifcar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLcantidad_primeraclase_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel24))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jTFcantidad_primeraclase_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                                            .addComponent(jTFcosto_primeraclase_modificar)))
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jLabel18)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                                        .addComponent(jTFcantidad_turistas_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel20)
-                                                .addComponent(jLabel27))
-                                            .addGap(28, 28, 28))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                            .addComponent(jLabel19)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTFhora_llegada_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                                        .addComponent(jTFhora_salida_modificar))
+                                    .addGap(18, 18, 18)
                                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jTFestado_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jTFcantidad_ejecutiva_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                                            .addComponent(jTFcosto_ejecutiva_modificar)))))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(176, 176, 176)
-                        .addComponent(jBbuscar_vuelo))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel16)))
-                .addGap(0, 50, Short.MAX_VALUE))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                            .addComponent(jLabel17)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(jTFfecha_salida_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                            .addComponent(jLabel22)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jTFfecha_llegada_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jTFlugar_llegada_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                                .addComponent(jTFlugar_salida_modificar)))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel25)
+                                .addGap(44, 44, 44)
+                                .addComponent(jTFcosto_turistas_modifcar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLcantidad_primeraclase_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel24))
+                                    .addGap(18, 18, Short.MAX_VALUE)
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTFcantidad_primeraclase_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                                        .addComponent(jTFcosto_primeraclase_modificar)))
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(jLabel18)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                                    .addComponent(jTFcantidad_turistas_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel27)
+                                        .addGap(28, 28, 28))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.LEADING))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTFestado_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTFcantidad_ejecutiva_modificar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                                        .addComponent(jTFcosto_ejecutiva_modificar))))))
+                    .addComponent(jLabel16))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jBmodificar)
+                .addGap(2, 2, 2)
+                .addComponent(jBmodificar_estado_vuelo, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jBmodificar_estado_vuelo)
-                .addGap(10, 10, 10)
                 .addComponent(jBmodificar_estodo_vuelo2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jBeliminar_vuelo)
+                .addGap(34, 34, 34))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(171, 171, 171)
+                        .addComponent(jBbuscar_vuelo))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(16, 16, 16)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(jTFbuscar_vuelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jCBvuelo_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jBbuscar_vuelo)
-                .addGap(24, 24, 24)
+                .addGap(6, 6, 6)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTFlugar_salida_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -637,16 +696,16 @@ public class JFAdmin extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jTFcosto_ejecutiva_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel27)))
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel20)
-                    .addComponent(jTFestado_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBmodificar_estodo_vuelo2)
+                    .addComponent(jTFestado_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBmodificar_estado_vuelo)
                     .addComponent(jBmodificar)
+                    .addComponent(jBmodificar_estodo_vuelo2)
                     .addComponent(jBeliminar_vuelo))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Modificación Vuelo", jPanel3);
@@ -668,11 +727,20 @@ public class JFAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBmodificar_estodo_vuelo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBmodificar_estodo_vuelo2ActionPerformed
-        // TODO add your handling code here:
+        jTFestado_modificar.setText("En arribo");
     }//GEN-LAST:event_jBmodificar_estodo_vuelo2ActionPerformed
 
     private void jBbuscar_vueloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBbuscar_vueloActionPerformed
-
+         try{
+                URL url  = new URL("http://127.0.0.1:5000/buscar_vuelo");
+                RequestBody body = new FormEncodingBuilder()
+                    .add("id", jCBvuelo_modificar.getSelectedItem().toString())
+		    .build();
+                String resultado = post(url, body);
+                imprimir_vuelo(resultado);
+            }catch(IOException e){
+                JOptionPane.showMessageDialog(null, "Problemas en el response de buscar vuelo"); 
+            }
     }//GEN-LAST:event_jBbuscar_vueloActionPerformed
 
     private void jBagregar_aeorupuertoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBagregar_aeorupuertoActionPerformed
@@ -680,16 +748,16 @@ public class JFAdmin extends javax.swing.JFrame {
                 && !jTFcontraseña_aeropuerto.getText().equals("")){
             try{
                 URL url  = new URL("http://127.0.0.1:5000/insertar_aereo");
-                int id = buscar_ultimo();
+                int id_aereo = buscar_ultimo();
                 RequestBody body = new FormEncodingBuilder()
-                    .add("id", Integer.toString(id))
+                    .add("id", Integer.toString(id_aereo))
                     .add("nombre", jTFnombre_aeropuerto.getText())
                     .add("ciudad", jTFciudad_aeropuerto.getText())
                     .add("contraseña", jTFcontraseña_aeropuerto.getText())
 		    .build();
-                imprimir_aereos();
                 String resultado = post(url, body);
                 limpiar_aereo();
+                imprimir_aereos();
                 JOptionPane.showMessageDialog(null, resultado); 
             }catch(IOException e){
                 JOptionPane.showMessageDialog(null, "Problemas en el response"); 
@@ -700,12 +768,83 @@ public class JFAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_jBagregar_aeorupuertoActionPerformed
 
     private void jBmodificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBmodificarActionPerformed
- 
+        if(!jTFhora_salida_modificar.getText().equals("") && !jTFhora_llegada_modificar.getText().equals("") 
+                && !jTFfecha_salida_modificar.getText().equals("") && !jTFfecha_llegada_modificar.getText().equals("")
+                && !jTFcantidad_primeraclase_modificar.getText().equals("") && !jTFcosto_primeraclase_modificar.getText().equals("")
+                && !jTFcantidad_ejecutiva_modificar.getText().equals("") && !jTFcosto_ejecutiva_modificar.getText().equals("")
+                && !jTFcantidad_turistas_modificar.getText().equals("") && !jTFcosto_turistas_modifcar.getText().equals("")) {
+            try{
+                URL url  = new URL("http://127.0.0.1:5000/modificar_vuelo");
+                RequestBody body = new FormEncodingBuilder()
+                    .add("id", jCBvuelo_modificar.getSelectedItem().toString())
+                    .add("hora salida", jTFhora_salida_modificar.getText())
+                    .add("hora llegada", jTFhora_llegada_modificar.getText())
+                    .add("fecha salida", jTFfecha_salida_modificar.getText())
+                    .add("fecha llegada", jTFfecha_llegada_modificar.getText())
+                    .add("cantidad primera clase", jTFcantidad_primeraclase_modificar.getText())
+                    .add("costo primera clase", jTFcosto_primeraclase_modificar.getText())
+                    .add("cantidad clase turista", jTFcantidad_turistas_modificar.getText())               
+                    .add("costo clase turista", jTFcosto_turistas_modifcar.getText())
+                    .add("cantidad clase ejecutiva", jTFcantidad_ejecutiva_modificar.getText())
+                    .add("costo clase ejecutiva", jTFcosto_ejecutiva_modificar.getText())   
+                    .add("estado inicial", jTFestado_modificar.getText())
+		    .build();
+                limpiar_vuelo();
+                String resultado = post(url, body);
+                JOptionPane.showMessageDialog(null, resultado); 
+            }catch(IOException e){
+                JOptionPane.showMessageDialog(null, "Problemas en el response de vuelos"); 
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "No deben dejarse campos vacios");
+        }
     }//GEN-LAST:event_jBmodificarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jBcrear_vueloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBcrear_vueloActionPerformed
+        if(!jTFhora_salida_insertar.getText().equals("") && !jTFhora_llegada_insertar.getText().equals("") 
+                && !jTFfecha_salida_insertar.getText().equals("") && !jTFfecha_llegada_insertar.getText().equals("")
+                && !jTFcantidad_primeraclase_insertar.getText().equals("") && !jTFcosto_primeraclase_insertar.getText().equals("")
+                && !jTFcantidad_ejecutiva_insertar.getText().equals("") && !jTFcosto_ejecutiva_insertar.getText().equals("")
+                && !jTFcantidad_turistas_insertar.getText().equals("") && !jTFcosto_turistas_insertar.getText().equals("")) {
+            try{
+                URL url  = new URL("http://127.0.0.1:5000/insertar_vuelo");
+                //int id = buscar_ultimo();
+                RequestBody body = new FormEncodingBuilder()
+                    .add("id", Integer.toString(id))
+                    .add("lugar salida", jCBsalida.getSelectedItem().toString())
+                    .add("lugar llegada", jCBllegada.getSelectedItem().toString())
+                    .add("hora salida", jTFhora_salida_insertar.getText())
+                    .add("hora llegada", jTFhora_llegada_insertar.getText())
+                    .add("fecha salida", jTFfecha_salida_insertar.getText())
+                    .add("fecha llegada", jTFfecha_llegada_insertar.getText())
+                    .add("cantidad primera clase", jTFcantidad_primeraclase_insertar.getText())
+                    .add("costo primera clase", jTFcosto_primeraclase_insertar.getText())
+                    .add("cantidad clase turista", jTFcantidad_turistas_insertar.getText())               
+                    .add("costo clase turista", jTFcosto_turistas_insertar.getText())
+                    .add("cantidad clase ejecutiva", jTFcantidad_ejecutiva_insertar.getText())
+                    .add("costo clase ejecutiva", jTFcosto_ejecutiva_insertar.getText())   
+                    .add("estado inicial", "En aeropuerto")
+		    .build();
+                String resultado = post(url, body);
+                imprimir_vuelos();
+                limpiar_vuelo();
+                id++;
+                JOptionPane.showMessageDialog(null, resultado); 
+            }catch(IOException e){
+                JOptionPane.showMessageDialog(null, "Problemas en el response de vuelos"); 
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "No deben dejarse campos vacios");
+        }   
+    }//GEN-LAST:event_jBcrear_vueloActionPerformed
+
+    private void jBmodificar_estado_vueloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBmodificar_estado_vueloActionPerformed
+        jTFestado_modificar.setText("En vuelo");
+    }//GEN-LAST:event_jBmodificar_estado_vueloActionPerformed
 
 
 
@@ -720,6 +859,8 @@ public class JFAdmin extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jCBllegada;
     private javax.swing.JComboBox jCBsalida;
+    private javax.swing.JComboBox jCBvuelo_modificar;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -749,15 +890,14 @@ public class JFAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
-    private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLcantidad_primeraclase_modificar;
     private javax.swing.JLabel jLcantidad_primeraclase_modificar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JTextField jTFbuscar_vuelo;
     private javax.swing.JTextField jTFcantidad_ejecutiva_insertar;
     private javax.swing.JTextField jTFcantidad_ejecutiva_modificar;
     private javax.swing.JTextField jTFcantidad_primeraclase_insertar;
@@ -773,7 +913,6 @@ public class JFAdmin extends javax.swing.JFrame {
     private javax.swing.JTextField jTFcosto_turistas_insertar;
     private javax.swing.JTextField jTFcosto_turistas_modifcar;
     private javax.swing.JTextField jTFestado_modificar;
-    private javax.swing.JTextField jTFestado_modificar1;
     private javax.swing.JTextField jTFfecha_llegada_insertar;
     private javax.swing.JTextField jTFfecha_llegada_modificar;
     private javax.swing.JTextField jTFfecha_salida_insertar;
@@ -783,6 +922,7 @@ public class JFAdmin extends javax.swing.JFrame {
     private javax.swing.JTextField jTFhora_salida_insertar;
     private javax.swing.JTextField jTFhora_salida_modificar;
     private javax.swing.JTextField jTFlugar_llegada_modificar;
+    private javax.swing.JTextField jTFlugar_salida_modificar;
     private javax.swing.JTextField jTFnombre_aeropuerto;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;

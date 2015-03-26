@@ -1,7 +1,5 @@
 __author__ = 'Cristian'
 
-import Estructuras.Nodo_aeropuerto as nodo
-
 class Raiz_aeropuerto(object):
 #constructor de la clase raiz aeropuertos
     def __init__(self):
